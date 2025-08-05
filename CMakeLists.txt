@@ -21,23 +21,7 @@ target_include_directories(analyzer PRIVATE
 include(cmake/CPM.cmake)
 
 CPMAddPackage("gh:nlohmann/json@3.12.0")
-# Отключаем benchmark - он не нужен для основного функционала
-# CPMAddPackage(
-#   NAME benchmark
-#   GIT_TAG v1.8.3 
-#   GITHUB_REPOSITORY google/benchmark
-#   OPTIONS "BENCHMARK_ENABLE_TESTING Off"
-# )
-# Убираем fmt - используем стандартный вывод
-# CPMAddPackage(
-#   NAME fmt
-#   GIT_TAG 11.2.0 
-#   GITHUB_REPOSITORY fmtlib/fmt
-# )
 
 target_link_libraries(analyzer PRIVATE 
     nlohmann_json::nlohmann_json 
 )
-
-# Убираем флаг, который не поддерживается в MSVC
-# target_compile_options(fmt INTERFACE -Wno-deprecated-literal-operator)
