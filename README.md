@@ -7,6 +7,10 @@
 ## Возможные проблемы
 Могут возникнуть проблемы с настройками внутри .vscode, но я думаю, что вы справитесь. Все таки для таких случаев и существуют нейронные сети
 
+## Скриншоты
+<img width="1364" height="668" alt="image" src="https://github.com/user-attachments/assets/647f0999-6097-4d6d-bf29-d5566bf4a8e2" />
+<img width="440" height="46" alt="image" src="https://github.com/user-attachments/assets/55354d20-24a3-4652-b8f1-437a4b43e39a" />
+
 
 ## Возможности
 
@@ -117,6 +121,7 @@ analyzer/
   }
 ]
 ```
+
 
 
 
