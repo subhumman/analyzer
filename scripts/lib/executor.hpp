@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <functional>
 #include <filesystem>
+#include <fstream>
 
 class Exec{    
     Lexer lexer;
@@ -20,4 +21,5 @@ class Exec{
         void remove(const std::string& command);
         void history(const std::string& command);
         void init();
+        void write(const std::string& command);
 };

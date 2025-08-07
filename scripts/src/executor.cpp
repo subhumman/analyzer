@@ -16,7 +16,8 @@ void Exec::exec_com(const std::string& command) {
             {"RENAME", [this](const std::string& cmd) { this->rename(cmd); }},
             {"CHTP", [this](const std::string& cmd) { this->chtp(cmd); }},
             {"REMOVE", [this](const std::string& cmd) { this->remove(cmd); }},
-            {"HISTORY", [this](const std::string& cmd) { this->history(cmd); }}
+            {"HISTORY", [this](const std::string& cmd) { this->history(cmd); }},
+            {"WRITE", [this](const std::string& cmd) {this->write(cmd);}}
         };
         
         auto it = commands.find(token);
@@ -28,6 +29,34 @@ void Exec::exec_com(const std::string& command) {
     } catch (const std::exception& e) {
         std::cerr << "> Error executing command: " << e.what() << std::endl;
     }
+}
+
+
+// in this fn i used the ios::app to write a text to file tail. If you want rewrite text you can used the ios::out;
+void Exec::write(const std::string& command){
+    auto args = lexer.parse_argument(command);
+    if(args.size() < 3) throw std::runtime_error("> Error on command type");
+    std::string& filename = args[1];
+    try{
+        //this we concate the "mone word more text" to one arg(check the lexer class)
+        std::string text;
+        for(size_t i = 2; i < args.size(); i++){
+            if(i > 2)   text += " ";
+            text += args[i];
+        }
+
+        std::ofstream outfile(filename, std::ios::app);
+        if(!outfile) throw std::runtime_error("> Could not open file: " + filename);
+        
+        outfile << text << std::endl;
+        if(outfile.fail()) throw std::runtime_error("> Write operation failed");
+        
+        std::cout << "> Text written to " << filename << std::endl;
+    
+    }catch(fs::filesystem_error& e){
+        throw std::runtime_error("> Error on " + std::string(e.what()));
+    }
+    return;
 }
 
 void Exec::create(const std::string& command){
