@@ -16,6 +16,7 @@ int main() {
     std::cout << ">   REMOVE <filename> - Remove file\n";
     std::cout << ">   HISTORY - Show operations history\n";
     std::cout << ">   WRITE - write the text .txt to the tail your file\n";
+    std::cout << ">   ANAL - analyze own .txt file to character count\n";
     std::cout << ">   EXIT - Exit program\n";
     std::cout << ">\n";
     

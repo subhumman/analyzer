@@ -17,7 +17,8 @@ void Exec::exec_com(const std::string& command) {
             {"CHTP", [this](const std::string& cmd) { this->chtp(cmd); }},
             {"REMOVE", [this](const std::string& cmd) { this->remove(cmd); }},
             {"HISTORY", [this](const std::string& cmd) { this->history(cmd); }},
-            {"WRITE", [this](const std::string& cmd) {this->write(cmd);}}
+            {"WRITE", [this](const std::string& cmd) {this->write(cmd);}},
+            {"ANAL", [this](const std::string& cmd) {this->anal(cmd);}}
         };
         
         auto it = commands.find(token);
@@ -28,6 +29,91 @@ void Exec::exec_com(const std::string& command) {
         }
     } catch (const std::exception& e) {
         std::cerr << "> Error executing command: " << e.what() << std::endl;
+    }
+}
+
+void Exec::anal(const std::string& command){
+    auto args = lexer.parse_argument(command);
+    if (args.size() < 2) {
+        throw std::runtime_error("> Error command syntax");
+    }
+    try {
+        if (!std::filesystem::exists(args[1])) {
+            throw std::runtime_error("> File does not exist");
+        }
+
+        // открытие файла в бинарнике для лучшего контроля памяти
+        std::ifstream file(args[1], std::ios::binary);
+        if (!file) {
+            throw std::runtime_error("> Error opening file");
+        }
+
+        constexpr size_t BUFFER_SIZE = 4096; // 4 KB
+        char buffer[BUFFER_SIZE];
+        int symbol_count = 0; // счётчик символов 
+        int pending_bytes = 0; // ожидаемые байты для текущего символа utf-8
+
+        while (file.read(buffer, BUFFER_SIZE)) {
+            for (size_t i = 0; i < file.gcount(); ++i) {
+                unsigned char byte = buffer[i];
+                
+                if (pending_bytes > 0) {
+                    // проверка, что это продолжение символа (биты 10xxxxxx)
+                    if ((byte & 0xC0) == 0x80) {
+                        pending_bytes--;
+                    } else {
+                        // некорректный utf-8
+                        pending_bytes = 0;
+                    }
+                } else {
+                    // определение длинны символа utf-8
+                    if (byte < 0x80) { // 1-байтовый символ (ascii)
+                        symbol_count++;
+                    } else if ((byte & 0xE0) == 0xC0) { // 2-байтовый
+                        pending_bytes = 1;
+                        symbol_count++;
+                    } else if ((byte & 0xF0) == 0xE0) { // 3-байтовый
+                        pending_bytes = 2;
+                        symbol_count++;
+                    } else if ((byte & 0xF8) == 0xF0) { // 4-байтовый
+                        pending_bytes = 3;
+                        symbol_count++;
+                    }
+                }
+            }
+        }
+
+        // учет остатка данных после последнего read
+        for (size_t i = 0; i < file.gcount(); ++i) {
+            unsigned char byte = buffer[i];
+            if (pending_bytes > 0) {
+                    if ((byte & 0xC0) == 0x80) {
+                        pending_bytes--;
+                    } else {
+                        // некорректный utf-8
+                        pending_bytes = 0;
+                    }
+                } else {
+                    // определение длинны символа utf-8
+                    if (byte < 0x80) { // 1-байтовый символ (ascii)
+                        symbol_count++;
+                    } else if ((byte & 0xE0) == 0xC0) { // 2-байтовый
+                        pending_bytes = 1;
+                        symbol_count++;
+                    } else if ((byte & 0xF0) == 0xE0) { // 3-байтовый
+                        pending_bytes = 2;
+                        symbol_count++;
+                    } else if ((byte & 0xF8) == 0xF0) { // 4-байтовый
+                        pending_bytes = 3;
+                        symbol_count++;
+                    }
+                }
+        }
+
+        std::cout << "> Symbols in file: " << symbol_count << "\n";
+
+    } catch (const std::exception& e) {
+        throw std::runtime_error("> Error reading file: " + std::string(e.what()));
     }
 }
 

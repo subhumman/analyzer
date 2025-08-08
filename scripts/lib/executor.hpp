@@ -20,6 +20,8 @@ class Exec{
         void rename(const std::string& command);
         void remove(const std::string& command);
         void history(const std::string& command);
-        void init();
         void write(const std::string& command);
+        void anal(const std::string& command);
+        void init();
+        
 };

@@ -1,7 +1,3 @@
-# Если вы заинтересуетесь CPM.cmake, как и все остальное он есть на гитхабе. Эта штука появится после его инициализации в проекте
-# Да, можно было бы использовать aui.boot или просто FetchContent, но я ленив в плане систем сборок и горю поскорее начать писать саму программу, так что CPM always
-
-
 # SPDX-License-Identifier: MIT
 #
 # SPDX-FileCopyrightText: Copyright (c) 2019-2023 Lars Melchior and contributors
